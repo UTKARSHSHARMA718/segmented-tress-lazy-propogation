@@ -1,0 +1,59 @@
+import java.util.*;
+import java.io.*;
+public class Main{
+    static int t[],a[];
+    public static void main(String args[]) throws IOException{
+        BufferedReader sc=new BufferedReader(new InputStreamReader(System.in));
+        PrintWriter pw=new PrintWriter(System.out);
+        String s[]=sc.readLine().trim().split(" ");
+        int n=Integer.parseInt(s[0]);
+        int m=Integer.parseInt(s[1]);
+        t=new int[(int)Math.pow(2,n)*4+2];
+        a=new int[(int)Math.pow(2,n)];
+        String s1[]=sc.readLine().trim().split(" ");
+        for(int i=0;i<Math.pow(2,n);i++)a[i]=Integer.parseInt(s1[i]);
+        if(n%2==0)
+        build(0,0,(int)Math.pow(2,n)-1,1);
+        else build(0,0,(int)Math.pow(2,n)-1,0);
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<m;i++){
+            String s2[]=sc.readLine().trim().split(" ");
+            int p=Integer.parseInt(s2[0])-1;
+            int d=Integer.parseInt(s2[1]);
+            if(n%2==0)
+            update(0,0,(int)Math.pow(2,n)-1,p,d,1);
+            else update(0,0,(int)Math.pow(2,n)-1,p,d,0);
+            
+            sb.append(t[0]+"\n");
+        }
+        pw.println(sb.toString().trim());
+        pw.flush();
+        pw.close();
+        sc.close();
+    }
+    public static void build(int v,int l,int r,int p){
+        if(l>r)return ;
+        if(l==r){
+            t[v]=a[l];
+            return;
+        }else{
+            int mid=(l+r)>>1;
+            build(2*v+1,l,mid,p^1);
+            build(2*v+2,mid+1,r,p^1);
+            if(p==1)t[v]=t[2*v+1]^t[2*v+2];
+            else t[v]=t[2*v+1]|t[2*v+2];
+        }
+    }
+    public static void update(int v,int tl,int tr,int p,int d,int p1){
+        if(tl>tr)return ;
+        if(tl==tr){
+            t[v]=d;
+            return;
+        }
+        int mid=(tl+tr)>>1;
+        if(p<=mid)update(2*v+1,tl,mid,p,d,p1^1);
+        else update(2*v+2,mid+1,tr,p,d,p1^1);
+        if(p1==1)t[v]=t[2*v+1]^t[2*v+2];
+        else t[v]=t[2*v+1]|t[2*v+2];
+    }
+}
